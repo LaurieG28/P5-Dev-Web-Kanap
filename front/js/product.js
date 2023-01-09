@@ -33,11 +33,13 @@ fetch('http://localhost:3000/api/products/' + id)
 
         for (const color of colors) {
             const optionElement = document.createElement("option");
-            optionElement.innertext = product.color;
+            optionElement.innerText = color;
+            optionElement.value = color;
             colorsElement.appendChild(optionElement);
         }
-    })
 
+        const quantity = 
+    })
     .catch(function (error) {
         console.log(error);
     })
