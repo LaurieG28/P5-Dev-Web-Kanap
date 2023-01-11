@@ -28,17 +28,27 @@ fetch('http://localhost:3000/api/products/' + id)
         const descriptionElement = document.getElementById("description");
         descriptionElement.innerText = product.description;
 
-        const colorsElement = document.getElementById("colors");
+        const selectElement = document.getElementById("colors");
         const colors = product.colors;
 
         for (const color of colors) {
             const optionElement = document.createElement("option");
             optionElement.innerText = color;
             optionElement.value = color;
-            colorsElement.appendChild(optionElement);
+            selectElement.appendChild(optionElement);
         }
 
-        const quantity = 
+        selectElement.addEventListener("change", function (eventChange) {
+            console.log(eventChange);
+        });
+
+        const cart = document.getElementById("addToCart");
+        cart.addEventListener("click", function (event) {
+            event.preventDefault();
+            //selectElement.selectedOptions[0].value;//
+
+            const quantity = document.getElementById("quantity");
+        });
     })
     .catch(function (error) {
         console.log(error);
