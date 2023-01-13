@@ -38,21 +38,54 @@ fetch('http://localhost:3000/api/products/' + id)
             selectElement.appendChild(optionElement);
         }
 
-        selectElement.addEventListener("change", function (eventChange) {
-            console.log(eventChange);
-        });
-
-        const cart = document.getElementById("addToCart");
-        cart.addEventListener("click", function (event) {
+        const buttonElement = document.getElementById("addToCart");
+        buttonElement.addEventListener("click", function (event) {
             event.preventDefault();
-            //selectElement.selectedOptions[0].value;//
-
             const quantity = document.getElementById("quantity");
+
+            const selectedColor = selectElement.value;
+            const selectedQuantity = quantity.value;
+
+            let cart = JSON.parse(window.localStorage.getItem("cart"));
+
+            const productForCart = {
+                id: id,
+                color: selectedColor,
+                quantity: selectedQuantity,
+            };
+
+            if (cart !== null) {
+                cart.push(productForCart);
+                window.localStorage.setItem("cart", JSON.stringify(cart));
+
+                // Chercher dans le tableau ici
+
+            });
+        // Si existe alors on rentre dans le if
+        if (true) {
+
+        } else {
+            // ici on push vu que le produit n'existe pas dans le tableau
+        }
+
+    } else {
+        cart =[];
+        cart.push(productForCart);
+        window.localStorage.setItem("cart", JSON.stringify(cart));
+    }
+
+
+
+
+            // window.localStorage.setItem("cart", cart);
+
+
+
         });
     })
-    .catch(function (error) {
-        console.log(error);
-    })
+    .catch (function (error) {
+    console.log(error);
+})
 
 
 
