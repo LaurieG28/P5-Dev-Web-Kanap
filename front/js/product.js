@@ -48,44 +48,46 @@ fetch('http://localhost:3000/api/products/' + id)
 
             let cart = JSON.parse(window.localStorage.getItem("cart"));
 
-            const productForCart = {
+            let productForCart = {
                 id: id,
                 color: selectedColor,
                 quantity: selectedQuantity,
             };
 
-            if (cart !== null) {
+            if (cart == null) {
+                cart = [];
                 cart.push(productForCart);
                 window.localStorage.setItem("cart", JSON.stringify(cart));
 
-                // Chercher dans le tableau ici
+            } else {
+                let addProduct = true;
+                for (let productInCart of cart) {
+                    console.log("productForCart", productForCart);
+                    console.log("productInCart", productInCart);
 
-            });
-        // Si existe alors on rentre dans le if
-        if (true) {
+                    if (productForCart.id == productInCart.id && productForCart.color == productInCart.color) {
+                        let newQuantity = parseInt(productForCart.quantity) + parseInt(productInCart.quantity);
 
-        } else {
-            // ici on push vu que le produit n'existe pas dans le tableau
-        }
+                        productInCart.quantity = newQuantity;
+                        window.localStorage.setItem("cart", JSON.stringify(cart));
+                        addProduct = false;
+                    }
+                }
 
-    } else {
-        cart =[];
-        cart.push(productForCart);
-        window.localStorage.setItem("cart", JSON.stringify(cart));
-    }
+                if (addProduct == true) {
+                    cart.push(productForCart);
+                    window.localStorage.setItem("cart", JSON.stringify(cart));
+                }
+            }
 
+        })
 
-
-
-            // window.localStorage.setItem("cart", cart);
-
-
-
-        });
     })
-    .catch (function (error) {
-    console.log(error);
-})
 
 
 
+    // window.localStorage.setItem("cart", cart);
+
+    .catch(function (error) {
+        console.log(error);
+    })
