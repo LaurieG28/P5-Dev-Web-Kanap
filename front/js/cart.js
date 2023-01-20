@@ -1,8 +1,12 @@
 const cart = JSON.parse(window.localStorage.getItem("cart"));
 console.log(cart);
 
-for (let productInCart of cart) {
-    if (cart !== null) {
+let totalQuantityCart = 0;
+let totalPriceCart = 0;
+
+if (cart !== null) {
+    for (let productInCart of cart) {
+
         let sectionId = document.getElementById("cart__items");
         let article = document.createElement("article");
 
@@ -74,14 +78,18 @@ for (let productInCart of cart) {
         divSettings.appendChild(divSettingsDelete);
 
         let pDelete = document.createElement("p");
-        pDelete.classList.add("deleteitem");
+        pDelete.classList.add("deleteItem");
         divSettingsDelete.appendChild(pDelete);
         pDelete.innerText = "Supprimer";
 
-        let spanQuantity = document.getElementById("totalQuantity");
-        // spanQuantity.id = ;
-        let spanPrice = document.getElementById("totalPrice");
-        // spanPrice.id = ;
+        let parseQuantity = parseInt(productInCart.quantity);
 
+        totalQuantityCart = totalQuantityCart + parseQuantity;
+        totalPriceCart = totalPriceCart + (parseInt(productInCart.price) * parseQuantity);
     }
+
+    let spanQuantity = document.getElementById("totalQuantity");
+    spanQuantity.innerText = totalQuantityCart;
+    let spanPrice = document.getElementById("totalPrice");
+    spanPrice.innerText = totalPriceCart;
 }
