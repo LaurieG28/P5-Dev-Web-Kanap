@@ -49,13 +49,11 @@ fetch('http://localhost:3000/api/products/' + id)
             let cart = JSON.parse(window.localStorage.getItem("cart"));
 
             let productForCart = {
-                name: product.name,
-                imageUrl: product.imageUrl,
-                altTxt: product.altTxt,
+
                 id: id,
                 color: selectedColor,
                 quantity: selectedQuantity,
-                price: product.price
+
             };
 
             if (cart == null) {
