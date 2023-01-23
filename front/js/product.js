@@ -49,11 +49,9 @@ fetch('http://localhost:3000/api/products/' + id)
             let cart = JSON.parse(window.localStorage.getItem("cart"));
 
             let productForCart = {
-
                 id: id,
                 color: selectedColor,
                 quantity: selectedQuantity,
-
             };
 
             if (cart == null) {
