@@ -77,6 +77,40 @@ if (cart !== null) {
                 inputQuantity.max = "100";
                 inputQuantity.value = productInCart.quantity;
 
+                inputQuantity.addEventListener("change", function (event) {
+                    event.preventDefault();
+                    let newQuantity = event.target.value;
+
+                    if (newQuantity > productInCart.quantity) {
+                        let addedQuantity = newQuantity - productInCart.quantity;
+                        totalQuantityCart = totalQuantityCart + addedQuantity;
+                        spanQuantity.innerText = totalQuantityCart;
+
+                        // Ici modifié prix avec +
+                        let addedPrice = product.price * parseInt(addedQuantity);
+                        console.log(addedPrice)
+
+                        totalPriceCart = totalPriceCart + addedPrice;
+                        spanPrice.innerText = totalPriceCart;
+                        console.log(totalPriceCart)
+
+                    } else {
+                        let removedQuantity = productInCart.quantity - newQuantity;
+                        totalQuantityCart = totalQuantityCart - removedQuantity;
+
+                        // Ici modifié prix avec -
+                        let removedPrice = product.price * parseInt(removedQuantity);
+                        totalPriceCart = totalPriceCart - removedPrice;
+                        spanPrice.innerText = totalPriceCart;
+                    };
+
+                    spanQuantity.innerText = totalQuantityCart;
+                    spanPrice.innerText = totalPriceCart;
+
+                    productInCart.quantity = newQuantity;
+                    window.localStorage.setItem("cart", JSON.stringify(cart));
+                });
+
                 divSettingsQuantity.appendChild(pQuantity);
                 divSettingsQuantity.appendChild(inputQuantity);
                 pQuantity.innerText = "Qté : ";
@@ -99,11 +133,10 @@ if (cart !== null) {
                 spanQuantity.innerText = totalQuantityCart;
                 let spanPrice = document.getElementById("totalPrice");
                 spanPrice.innerText = totalPriceCart;
-
-
             });
     }
 }
+
 
 
 
