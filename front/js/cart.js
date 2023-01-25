@@ -1,4 +1,4 @@
-const cart = JSON.parse(window.localStorage.getItem("cart"));
+let cart = JSON.parse(window.localStorage.getItem("cart"));
 console.log(cart);
 
 let totalQuantityCart = 0;
@@ -84,24 +84,15 @@ if (cart !== null) {
                     if (newQuantity > productInCart.quantity) {
                         let addedQuantity = newQuantity - productInCart.quantity;
                         totalQuantityCart = totalQuantityCart + addedQuantity;
-                        spanQuantity.innerText = totalQuantityCart;
 
-                        // Ici modifié prix avec +
                         let addedPrice = product.price * parseInt(addedQuantity);
-                        console.log(addedPrice)
-
                         totalPriceCart = totalPriceCart + addedPrice;
-                        spanPrice.innerText = totalPriceCart;
-                        console.log(totalPriceCart)
-
                     } else {
                         let removedQuantity = productInCart.quantity - newQuantity;
                         totalQuantityCart = totalQuantityCart - removedQuantity;
 
-                        // Ici modifié prix avec -
                         let removedPrice = product.price * parseInt(removedQuantity);
                         totalPriceCart = totalPriceCart - removedPrice;
-                        spanPrice.innerText = totalPriceCart;
                     };
 
                     spanQuantity.innerText = totalQuantityCart;
@@ -123,6 +114,25 @@ if (cart !== null) {
                 pDelete.classList.add("deleteItem");
                 divSettingsDelete.appendChild(pDelete);
                 pDelete.innerText = "Supprimer";
+
+                // delete : 
+                pDelete.addEventListener("click", function (eventDelete) {
+                    eventDelete.preventDefault();
+                    let index = cart.findIndex((product) => product.id == productInCart.id);
+                    cart.splice(index, 1);
+
+                    let removedQuantity = productInCart.quantity;
+                    totalQuantityCart = totalQuantityCart - removedQuantity;
+                    spanQuantity.innerText = totalQuantityCart;
+
+                    let removedPrice = product.price * parseInt(removedQuantity);
+                    totalPriceCart = totalPriceCart - removedPrice;
+                    spanPrice.innerText = totalPriceCart;
+
+                    article.remove();
+
+                    window.localStorage.setItem("cart", JSON.stringify(cart));
+                });
 
                 let parseQuantity = parseInt(productInCart.quantity);
 
