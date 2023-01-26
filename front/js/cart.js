@@ -1,3 +1,5 @@
+// Panier
+
 let cart = JSON.parse(window.localStorage.getItem("cart"));
 
 let totalQuantityCart = 0;
@@ -147,97 +149,130 @@ if (cart !== null) {
     }
 }
 
+// Formulaire
+let isFirstNameValid = false;
+let isLastNameValid = false;
+let isAddressValid = false;
+let isCityValid = false;
+let isEmailValid = false;
+
+
 let inputFirstName = document.getElementById("firstName");
 let pFirstNameError = document.getElementById("firstNameErrorMsg");
+pFirstNameError.innerText = "Veuillez renseigner un prénom"
 
 inputFirstName.addEventListener("input", function (event) {
     event.preventDefault();
     let firstNameValue = event.target.value;
 
     if (firstNameValue != "" && firstNameValue.match(/^[a-zA-Z]+$/)) {
-        isValid = true;
+        isFirstNameValid = true;
         pFirstNameError.innerText = "";
     } else {
-        isValid = false;
+        isFirstNameValid = false;
         pFirstNameError.innerText = "Veuillez renseigner un prénom";
     }
 });
 
 let inputLastName = document.getElementById("lastName");
 let pLastNameError = document.getElementById("lastNameErrorMsg");
+pLastNameError.innerText = "Veuillez renseigner un nom";
 
 inputLastName.addEventListener("input", function (event) {
     event.preventDefault();
     let lastNameValue = event.target.value;
 
     if (lastNameValue != "" && lastNameValue.match(/^[a-zA-Z]+$/)) {
-        isValid = true;
+        isLastNameValid = true;
         pLastNameError.innerText = "";
     } else {
-        isValid = false;
+        isLastNameValid = false;
         pLastNameError.innerText = "Veuillez renseigner un nom";
     }
 });
 
 let inputAddress = document.getElementById("address");
 let pAddressError = document.getElementById("addressErrorMsg");
+pAddressError.innerText = "Veuillez remplir ce champ";
 
 inputAddress.addEventListener("input", function (event) {
     event.preventDefault();
     let addressValue = event.target.value;
 
     if (addressValue != "") {
-        isValid = true;
+        isAddressValid = true;
         pAddressError.innerText = "";
     } else {
-        isValid = false;
+        isAddressValid = false;
         pAddressError.innerText = "Veuillez remplir ce champ";
     }
 });
 
 let inputCity = document.getElementById("city");
 let pCityError = document.getElementById("cityErrorMsg");
+pCityError.innerText = "Veuillez renseigner une ville";
 
 inputCity.addEventListener("input", function (event) {
     event.preventDefault();
     let cityValue = event.target.value;
 
     if (cityValue != "" && cityValue.match(/^[a-zA-Z]+$/)) {
-        isValid = true;
+        isCityValid = true;
         pCityError.innerText = "";
     } else {
-        isValid = false;
+        isCityValid = false;
         pCityError.innerText = "Veuillez renseigner une ville";
     }
 });
 
 let inputEmail = document.getElementById("email");
 let pEmailError = document.getElementById("emailErrorMsg");
+pEmailError.innerText = "Veuillez renseigner une adresse mail";
 
 inputEmail.addEventListener("input", function (event) {
     event.preventDefault();
     let emailValue = event.target.value;
 
     if (emailValue != "" && emailValue.match(/^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/)) {
-        isValid = true;
+        isEmailValid = true;
         pEmailError.innerText = "";
     } else {
-        isValid = false;
+        isEmailValid = false;
         pEmailError.innerText = "Veuillez renseigner une adresse mail";
     }
 });
 
-let inputCommander = document.getElementById("order");
-inputCommander.addEventListener("input", function (event) {
-    fetch('http://localhost:3000/api/products/order/',
-        method: “POST”,
-        headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-    },
-        body: JSON.stringify(jsonBody)
-    )
+let inputCommander = document.getElementsByClassName("cart__order__form")[0];
+
+inputCommander.addEventListener("submit", function (event) {
+    event.preventDefault();
+    if (isFirstNameValid && isLastNameValid && isAddressValid && isCityValid && isEmailValid) {
+        let productIds = cart.map((product) => product.id);
+
+        let jsonBody = {
+            contact: {
+                firstName: inputFirstName.value,
+                lastName: inputLastName.value,
+                address: inputAddress.value,
+                city: inputCity.value,
+                email: inputEmail.value
+            },
+            products: productIds
+        };
+
+        fetch('http://localhost:3000/api/products/order/', {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonBody)
+        })
+            .then((response) => console.log(response))
+    }
 });
+
+
 
 
 
