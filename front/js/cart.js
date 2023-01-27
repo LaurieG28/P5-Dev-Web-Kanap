@@ -268,7 +268,18 @@ inputCommander.addEventListener("submit", function (event) {
             },
             body: JSON.stringify(jsonBody)
         })
-            .then((response) => console.log(response))
+
+            .then(function (response) {
+                if (response.ok) {
+                    return response.json();
+                }
+            })
+            .then((response) => {
+                console.log("response: ", response);
+                document.location.href = 'confirmation.html?orderId=' + response.orderId;
+            });
+
+
     }
 });
 
