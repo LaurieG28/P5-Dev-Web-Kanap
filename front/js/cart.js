@@ -23,10 +23,8 @@ if (cart !== null) {
                 sectionId.appendChild(article);
 
                 article.setAttribute("data-id", productInCart.id);
-                console.log(article.getAttribute("data-id"));
 
                 article.setAttribute("data-color", productInCart.color);
-                console.log(article.getAttribute("data-color"));
 
                 let divImg = document.createElement("div");
                 divImg.classList.add("cart__item__img");
