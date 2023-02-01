@@ -1,3 +1,4 @@
+
 // Panier
 
 let cart = JSON.parse(window.localStorage.getItem("cart"));
