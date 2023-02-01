@@ -4,7 +4,7 @@ fetch('http://localhost:3000/api/products/')
     .then(function (response) {
         // Vérifie que la requête soit ok et pas en erreur
         if (response.ok) {
-            // La fonction .json() modifie le format du résultat en json (format pratique et utile pour les traitements en javascript), renvoi aussi un promesse
+            // La fonction .json() modifie le format du résultat en json (format pratique et utile pour les traitements en javascript), renvoi aussi une promesse
             return response.json();
         }
     })

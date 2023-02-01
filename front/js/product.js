@@ -62,8 +62,6 @@ fetch('http://localhost:3000/api/products/' + id)
             } else {
                 let addProduct = true;
                 for (let productInCart of cart) {
-                    console.log("productForCart", productForCart);
-                    console.log("productInCart", productInCart);
 
                     if (productForCart.id == productInCart.id && productForCart.color == productInCart.color) {
                         let newQuantity = parseInt(productForCart.quantity) + parseInt(productInCart.quantity);
