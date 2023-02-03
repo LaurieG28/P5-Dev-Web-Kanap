@@ -61,7 +61,8 @@ fetch('http://localhost:3000/api/products/' + id)
                 window.localStorage.setItem("cart", JSON.stringify(cart));
 
             } else {
-                let addProduct = true;
+                let addNewProductInCart = true;
+
                 for (let productInCart of cart) {
 
                     if (productForCart.id == productInCart.id && productForCart.color == productInCart.color) {
@@ -69,11 +70,11 @@ fetch('http://localhost:3000/api/products/' + id)
 
                         productInCart.quantity = newQuantity;
                         window.localStorage.setItem("cart", JSON.stringify(cart));
-                        addProduct = false;
+                        addNewProductInCart = false;
                     }
                 }
 
-                if (addProduct == true) {
+                if (addNewProductInCart == true) {
                     cart.push(productForCart);
                     window.localStorage.setItem("cart", JSON.stringify(cart));
                 }
