@@ -9,10 +9,7 @@ fetch('http://localhost:3000/api/products/' + id)
         }
     })
 
-    .then(function (jsonPromise) {
-        let product = jsonPromise
-        console.log(jsonPromise);
-
+    .then(function (product) {
         generateHtml(product);
     })
     .catch(function (error) {
