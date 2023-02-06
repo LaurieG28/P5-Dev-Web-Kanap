@@ -1,11 +1,11 @@
 
 // Panier
-
+// ici on récupère le panier
 let cart = JSON.parse(window.localStorage.getItem("cart"));
 
 let totalQuantityCart = 0;
 let totalPriceCart = 0;
-
+// si il est différent de null on créer un for avec une requête demandant l'id des produits dans le panier
 if (cart !== null) {
     for (let productInCart of cart) {
         fetch('http://localhost:3000/api/products/' + productInCart.id)
@@ -15,12 +15,14 @@ if (cart !== null) {
                 }
             })
             .then(function (product) {
+                // fait appel à la fonction generateHtml
                 generateHtml(product);
             });
     }
 }
 
 function generateHtml(product) {
+    // fonction qui va permettre d'afficher le modèle, la quantité, la couleur et le prix dans le panier
     let sectionId = document.getElementById("cart__items");
     let article = document.createElement("article");
 
@@ -81,6 +83,7 @@ function generateHtml(product) {
     inputQuantity.max = "100";
     inputQuantity.value = productInCart.quantity;
 
+    // on fait appel à la fonction updateProductQuantity
     inputQuantity.addEventListener("change", updateProductQuantity);
 
     divSettingsQuantity.appendChild(pQuantity);
@@ -97,10 +100,12 @@ function generateHtml(product) {
     pDelete.innerText = "Supprimer";
 
     // delete : 
+    // on fait appel à la fonction deleteProductFromCart
     pDelete.addEventListener("click", deleteProductFromCart);
 
     let parseQuantity = parseInt(productInCart.quantity);
 
+    // calcul de la quantité et du prix total du panier 
     totalQuantityCart = totalQuantityCart + parseQuantity;
     totalPriceCart = totalPriceCart + (parseInt(product.price) * parseQuantity);
 
@@ -111,6 +116,7 @@ function generateHtml(product) {
 }
 
 function updateProductQuantity(event) {
+    // fonction qui met à jour la quantité d'un produits dans le panier et donc la qtité totale et le prix total
     event.preventDefault();
     let newQuantity = event.target.value;
 
@@ -132,28 +138,36 @@ function updateProductQuantity(event) {
     spanPrice.innerText = totalPriceCart;
 
     productInCart.quantity = newQuantity;
+    // mise à jour du localstorage
     window.localStorage.setItem("cart", JSON.stringify(cart));
 }
 
 function deleteProductFromCart(eventDelete) {
+    // fonction permettant de supprimer article du panier
     eventDelete.preventDefault();
+    // on trouve l'emplacement dans le tableau cart, et on supprime l'article du panier
     let index = cart.findIndex((product) => product.id == productInCart.id);
     cart.splice(index, 1);
 
+    // mise à jour de la quantité
     let removedQuantity = productInCart.quantity;
     totalQuantityCart = totalQuantityCart - removedQuantity;
     spanQuantity.innerText = totalQuantityCart;
 
+    // mise à jour du prix 
     let removedPrice = product.price * parseInt(removedQuantity);
     totalPriceCart = totalPriceCart - removedPrice;
     spanPrice.innerText = totalPriceCart;
 
+    // suppression de l'article en html
     article.remove();
 
+    // mise à jour du localstorage
     window.localStorage.setItem("cart", JSON.stringify(cart));
 }
 
 // Formulaire
+// coordonnées de l'utilisateur
 let isFirstNameValid = false;
 let isLastNameValid = false;
 let isAddressValid = false;
@@ -168,6 +182,7 @@ let pFirstNameError = document.getElementById("firstNameErrorMsg");
 pFirstNameError.innerText = firstNameErrorMsg;
 
 inputFirstName.addEventListener("input", function (event) {
+    // écoute l'input et fait appel à la fonction checkFieldError pour chaque input
     checkFieldError(event, isFirstNameValid, pFirstNameError, /^[a-zA-Z]+$/);
 });
 
@@ -203,13 +218,15 @@ inputEmail.addEventListener("input", function (event) {
     checkFieldError(event, isEmailValid, pEmailError, /^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/);
 });
 
+// bouton commander
 let inputCommander = document.getElementsByClassName("cart__order__form")[0];
 
 inputCommander.addEventListener("submit", function (event) {
+    // écoute l'évenement et fait appel à la fonction getJsonbody et fait une requête et post au back
     event.preventDefault();
     if (isFirstNameValid && isLastNameValid && isAddressValid && isCityValid && isEmailValid) {
         let jsonBody = getJsonBody(cart, inputFirstName, inputLastName, inputAddress, inputCity, inputEmail);
-
+        // si infos ok on récupère JsonBody et on requête le back pour post les coordonnées
         fetch('http://localhost:3000/api/products/order/', {
             method: "POST",
             headers: {
@@ -225,7 +242,7 @@ inputCommander.addEventListener("submit", function (event) {
                 }
             })
             .then((response) => {
-                console.log("response: ", response);
+                // si reponse ok nous renvoie sur la page confirmation de commande avec le numéro de commande
                 document.location.href = 'confirmation.html?orderId=' + response.orderId;
             });
 
@@ -234,6 +251,7 @@ inputCommander.addEventListener("submit", function (event) {
 });
 
 function checkFieldError(event, isFieldValid, pError, regex) {
+    // fonction qui vérifie que nous avons un événement que c'est valid, qu'il y a un message d'erreur si non valid et des regex
     event.preventDefault();
     let value = event.target.value;
 
@@ -252,8 +270,10 @@ function checkFieldError(event, isFieldValid, pError, regex) {
 }
 
 function getJsonBody(cart, inputFirstName, inputLastName, inputAddress, inputCity, inputEmail) {
+    // fonction qui récupère le corps du fichier Json en nous donnant que les Id des articles du panier 
     let productIds = cart.map((product) => product.id);
 
+    // les données utiliateurs sont stockés dans cette variable les informations sont envoyées au back qui les vérifies et nous retourne la réponse Jsonbody
     let jsonBody = {
         contact: {
             firstName: inputFirstName.value,
