@@ -72,7 +72,7 @@ function addProductToCart(event) {
             quantity: selectedQuantity,
         };
 
-        // si panier null on créer ajoute et enregistre les produits dans cart et dans localstorage
+        // si panier null on créer et ajoute et enregistre le produit dans cart et dans localstorage
         if (cart == null) {
             cart = [];
             cart.push(productForCart);

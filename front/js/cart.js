@@ -5,7 +5,7 @@ let cart = JSON.parse(window.localStorage.getItem("cart"));
 
 let totalQuantityCart = 0;
 let totalPriceCart = 0;
-// si il est différent de null on créer un for avec une requête demandant l'id des produits dans le panier
+// si il est différent de null on créer un for avec une requête demandant l'id du produit dans le panier
 if (cart !== null) {
     for (let productInCart of cart) {
         fetch('http://localhost:3000/api/products/' + productInCart.id)
@@ -16,12 +16,12 @@ if (cart !== null) {
             })
             .then(function (product) {
                 // fait appel à la fonction generateHtml
-                generateHtml(product);
+                generateHtml(product, productInCart);
             });
     }
 }
 
-function generateHtml(product) {
+function generateHtml(product, productInCart) {
     // fonction qui va permettre d'afficher le modèle, la quantité, la couleur et le prix dans le panier
     let sectionId = document.getElementById("cart__items");
     let article = document.createElement("article");
@@ -105,7 +105,7 @@ function generateHtml(product) {
 
     let parseQuantity = parseInt(productInCart.quantity);
 
-    // calcul de la quantité et du prix total du panier 
+    // calcul de la quantité et du prix total dans le panier 
     totalQuantityCart = totalQuantityCart + parseQuantity;
     totalPriceCart = totalPriceCart + (parseInt(product.price) * parseQuantity);
 
@@ -116,7 +116,7 @@ function generateHtml(product) {
 }
 
 function updateProductQuantity(event) {
-    // fonction qui met à jour la quantité d'un produits dans le panier et donc la qtité totale et le prix total
+    // fonction qui met à jour la quantité d'un produit dans le panier et donc la qtité totale et le prix total
     event.preventDefault();
     let newQuantity = event.target.value;
 
@@ -166,8 +166,7 @@ function deleteProductFromCart(eventDelete) {
     window.localStorage.setItem("cart", JSON.stringify(cart));
 }
 
-// Formulaire
-// coordonnées de l'utilisateur
+// Formulaire / coordonnées de l'utilisateur
 let isFirstNameValid = false;
 let isLastNameValid = false;
 let isAddressValid = false;
@@ -182,8 +181,8 @@ let pFirstNameError = document.getElementById("firstNameErrorMsg");
 pFirstNameError.innerText = firstNameErrorMsg;
 
 inputFirstName.addEventListener("input", function (event) {
-    // écoute l'input et fait appel à la fonction checkFieldError pour chaque input
-    checkFieldError(event, isFirstNameValid, pFirstNameError, /^[a-zA-Z]+$/);
+    // écoute l'input et fait appel à la fonction checkField pour chaque input
+    checkField(event, isFirstNameValid, pFirstNameError, /^[a-zA-Z]+$/);
 });
 
 let inputLastName = document.getElementById("lastName");
@@ -191,7 +190,7 @@ let pLastNameError = document.getElementById("lastNameErrorMsg");
 pLastNameError.innerText = "Veuillez renseigner un nom";
 
 inputLastName.addEventListener("input", function (event) {
-    checkFieldError(event, isLastNameValid, pLastNameError, /^[a-zA-Z]+$/);
+    checkField(event, isLastNameValid, pLastNameError, /^[a-zA-Z]+$/);
 });
 
 let inputAddress = document.getElementById("address");
@@ -199,7 +198,7 @@ let pAddressError = document.getElementById("addressErrorMsg");
 pAddressError.innerText = "Veuillez remplir ce champ";
 
 inputAddress.addEventListener("input", function (event) {
-    checkFieldError(event, isAddressValid, pAddressError, null);
+    checkField(event, isAddressValid, pAddressError, null);
 });
 
 let inputCity = document.getElementById("city");
@@ -207,7 +206,7 @@ let pCityError = document.getElementById("cityErrorMsg");
 pCityError.innerText = "Veuillez renseigner une ville";
 
 inputCity.addEventListener("input", function (event) {
-    checkFieldError(event, isCityValid, pCityError, /^[a-zA-Z]+$/);
+    checkField(event, isCityValid, pCityError, /^[a-zA-Z]+$/);
 });
 
 let inputEmail = document.getElementById("email");
@@ -215,14 +214,14 @@ let pEmailError = document.getElementById("emailErrorMsg");
 pEmailError.innerText = "Veuillez renseigner une adresse mail";
 
 inputEmail.addEventListener("input", function (event) {
-    checkFieldError(event, isEmailValid, pEmailError, /^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/);
+    checkField(event, isEmailValid, pEmailError, /^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/);
 });
 
 // bouton commander
 let inputCommander = document.getElementsByClassName("cart__order__form")[0];
 
 inputCommander.addEventListener("submit", function (event) {
-    // écoute l'évenement et fait appel à la fonction getJsonbody et fait une requête et post au back
+    // écoute l'évenement et fait appel à la fonction getJsonBody et fait une requête et post au back
     event.preventDefault();
     if (isFirstNameValid && isLastNameValid && isAddressValid && isCityValid && isEmailValid) {
         let jsonBody = getJsonBody(cart, inputFirstName, inputLastName, inputAddress, inputCity, inputEmail);
@@ -250,7 +249,7 @@ inputCommander.addEventListener("submit", function (event) {
     }
 });
 
-function checkFieldError(event, isFieldValid, pError, regex) {
+function checkField(event, isFieldValid, pError, regex) {
     // fonction qui vérifie que nous avons un événement que c'est valid, qu'il y a un message d'erreur si non valid et des regex
     event.preventDefault();
     let value = event.target.value;
