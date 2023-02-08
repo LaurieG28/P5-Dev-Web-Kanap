@@ -84,7 +84,9 @@ function generateHtml(product, productInCart) {
     inputQuantity.value = productInCart.quantity;
 
     // on fait appel à la fonction updateProductQuantity
-    inputQuantity.addEventListener("change", updateProductQuantity);
+    inputQuantity.addEventListener("change", function (event) {
+        updateProductQuantity(event, productInCart, product);
+    });
 
     divSettingsQuantity.appendChild(pQuantity);
     divSettingsQuantity.appendChild(inputQuantity);
@@ -101,7 +103,9 @@ function generateHtml(product, productInCart) {
 
     // delete : 
     // on fait appel à la fonction deleteProductFromCart
-    pDelete.addEventListener("click", deleteProductFromCart);
+    pDelete.addEventListener("click", function (eventDelete) {
+        deleteProductFromCart(eventDelete, productInCart, product, article);
+    });
 
     let parseQuantity = parseInt(productInCart.quantity);
 
@@ -109,13 +113,10 @@ function generateHtml(product, productInCart) {
     totalQuantityCart = totalQuantityCart + parseQuantity;
     totalPriceCart = totalPriceCart + (parseInt(product.price) * parseQuantity);
 
-    let spanQuantity = document.getElementById("totalQuantity");
-    spanQuantity.innerText = totalQuantityCart;
-    let spanPrice = document.getElementById("totalPrice");
-    spanPrice.innerText = totalPriceCart;
+    updateTotal(totalPriceCart, totalQuantityCart);
 }
 
-function updateProductQuantity(event) {
+function updateProductQuantity(event, productInCart, product) {
     // fonction qui met à jour la quantité d'un produit dans le panier et donc la qtité totale et le prix total
     event.preventDefault();
     let newQuantity = event.target.value;
@@ -132,17 +133,16 @@ function updateProductQuantity(event) {
 
         let removedPrice = product.price * parseInt(removedQuantity);
         totalPriceCart = totalPriceCart - removedPrice;
-    };
+    }
 
-    spanQuantity.innerText = totalQuantityCart;
-    spanPrice.innerText = totalPriceCart;
+    updateTotal(totalPriceCart, totalQuantityCart);
 
     productInCart.quantity = newQuantity;
     // mise à jour du localstorage
     window.localStorage.setItem("cart", JSON.stringify(cart));
 }
 
-function deleteProductFromCart(eventDelete) {
+function deleteProductFromCart(eventDelete, productInCart, product, article) {
     // fonction permettant de supprimer article du panier
     eventDelete.preventDefault();
     // on trouve l'emplacement dans le tableau cart, et on supprime l'article du panier
@@ -152,18 +152,26 @@ function deleteProductFromCart(eventDelete) {
     // mise à jour de la quantité
     let removedQuantity = productInCart.quantity;
     totalQuantityCart = totalQuantityCart - removedQuantity;
-    spanQuantity.innerText = totalQuantityCart;
 
     // mise à jour du prix 
-    let removedPrice = product.price * parseInt(removedQuantity);
+    let removedPrice = (product.price) * parseInt(removedQuantity);
     totalPriceCart = totalPriceCart - removedPrice;
-    spanPrice.innerText = totalPriceCart;
+
+    updateTotal(totalPriceCart, totalQuantityCart);
 
     // suppression de l'article en html
     article.remove();
 
     // mise à jour du localstorage
     window.localStorage.setItem("cart", JSON.stringify(cart));
+}
+
+function updateTotal(totalPriceCart, totalQuantityCart) {
+    let spanQuantity = document.getElementById("totalQuantity");
+    let spanPrice = document.getElementById("totalPrice");
+
+    spanQuantity.innerText = totalQuantityCart;
+    spanPrice.innerText = totalPriceCart;
 }
 
 // Formulaire / coordonnées de l'utilisateur
@@ -174,6 +182,10 @@ let isCityValid = false;
 let isEmailValid = false;
 
 let firstNameErrorMsg = "Veuillez renseigner un prénom";
+let lastNameErrorMsg = "Veuillez renseigner un nom";
+let addressErrorMsg = "Veuillez renseigner une adresse";
+let cityErrorMsg = "Veuillez renseigner une ville";
+let emailErrorMsg = "Veuillez renseigner une adresse mail";
 
 
 let inputFirstName = document.getElementById("firstName");
@@ -182,39 +194,39 @@ pFirstNameError.innerText = firstNameErrorMsg;
 
 inputFirstName.addEventListener("input", function (event) {
     // écoute l'input et fait appel à la fonction checkField pour chaque input
-    checkField(event, isFirstNameValid, pFirstNameError, /^[a-zA-Z]+$/);
+    isFirstNameValid = checkFieldValid(event, pFirstNameError, firstNameErrorMsg, /^[a-zA-Z]+$/);
 });
 
 let inputLastName = document.getElementById("lastName");
 let pLastNameError = document.getElementById("lastNameErrorMsg");
-pLastNameError.innerText = "Veuillez renseigner un nom";
+pLastNameError.innerText = lastNameErrorMsg;
 
 inputLastName.addEventListener("input", function (event) {
-    checkField(event, isLastNameValid, pLastNameError, /^[a-zA-Z]+$/);
+    isLastNameValid = checkFieldValid(event, pLastNameError, lastNameErrorMsg, /^[a-zA-Z]+$/);
 });
 
 let inputAddress = document.getElementById("address");
 let pAddressError = document.getElementById("addressErrorMsg");
-pAddressError.innerText = "Veuillez remplir ce champ";
+pAddressError.innerText = addressErrorMsg;
 
 inputAddress.addEventListener("input", function (event) {
-    checkField(event, isAddressValid, pAddressError, null);
+    isAddressValid = checkFieldValid(event, pAddressError, addressErrorMsg, null);
 });
 
 let inputCity = document.getElementById("city");
 let pCityError = document.getElementById("cityErrorMsg");
-pCityError.innerText = "Veuillez renseigner une ville";
+pCityError.innerText = cityErrorMsg;
 
 inputCity.addEventListener("input", function (event) {
-    checkField(event, isCityValid, pCityError, /^[a-zA-Z]+$/);
+    isCityValid = checkFieldValid(event, pCityError, cityErrorMsg, /^[a-zA-Z]+$/);
 });
 
 let inputEmail = document.getElementById("email");
 let pEmailError = document.getElementById("emailErrorMsg");
-pEmailError.innerText = "Veuillez renseigner une adresse mail";
+pEmailError.innerText = emailErrorMsg;
 
 inputEmail.addEventListener("input", function (event) {
-    checkField(event, isEmailValid, pEmailError, /^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/);
+    isEmailValid = checkFieldValid(event, pEmailError, emailErrorMsg, /^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/);
 });
 
 // bouton commander
@@ -249,7 +261,7 @@ inputCommander.addEventListener("submit", function (event) {
     }
 });
 
-function checkField(event, isFieldValid, pError, regex) {
+function checkFieldValid(event, pError, errorMsg, regex) {
     // fonction qui vérifie que nous avons un événement que c'est valid, qu'il y a un message d'erreur si non valid et des regex
     event.preventDefault();
     let value = event.target.value;
@@ -260,11 +272,13 @@ function checkField(event, isFieldValid, pError, regex) {
     }
 
     if (value != '' && regexValid) {
-        isFieldValid = true;
         pError.innerText = '';
+
+        return true;
     } else {
-        isFieldValid = false;
-        pError.innerText = firstNameErrorMsg;
+        pError.innerText = errorMsg;
+
+        return false;
     }
 }
 
@@ -286,7 +300,3 @@ function getJsonBody(cart, inputFirstName, inputLastName, inputAddress, inputCit
 
     return jsonBody;
 }
-
-
-
-
