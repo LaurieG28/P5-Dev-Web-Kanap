@@ -121,25 +121,28 @@ function updateProductQuantity(event, productInCart, product) {
     event.preventDefault();
     let newQuantity = event.target.value;
 
-    if (newQuantity > productInCart.quantity) {
-        let addedQuantity = newQuantity - productInCart.quantity;
-        totalQuantityCart = totalQuantityCart + addedQuantity;
+    if (newQuantity > 0) {
+        if (newQuantity > productInCart.quantity) {
+            let addedQuantity = newQuantity - productInCart.quantity;
+            totalQuantityCart = totalQuantityCart + addedQuantity;
 
-        let addedPrice = product.price * parseInt(addedQuantity);
-        totalPriceCart = totalPriceCart + addedPrice;
-    } else {
-        let removedQuantity = productInCart.quantity - newQuantity;
-        totalQuantityCart = totalQuantityCart - removedQuantity;
+            let addedPrice = product.price * parseInt(addedQuantity);
+            totalPriceCart = totalPriceCart + addedPrice;
+        } else {
+            let removedQuantity = productInCart.quantity - newQuantity;
+            totalQuantityCart = totalQuantityCart - removedQuantity;
 
-        let removedPrice = product.price * parseInt(removedQuantity);
-        totalPriceCart = totalPriceCart - removedPrice;
+            let removedPrice = product.price * parseInt(removedQuantity);
+            totalPriceCart = totalPriceCart - removedPrice;
+        }
+
+        updateTotal(totalPriceCart, totalQuantityCart);
+
+        productInCart.quantity = newQuantity;
+        // mise à jour du localstorage
+        window.localStorage.setItem("cart", JSON.stringify(cart));
     }
 
-    updateTotal(totalPriceCart, totalQuantityCart);
-
-    productInCart.quantity = newQuantity;
-    // mise à jour du localstorage
-    window.localStorage.setItem("cart", JSON.stringify(cart));
 }
 
 function deleteProductFromCart(eventDelete, productInCart, product, article) {
